@@ -1,0 +1,25 @@
+version: '3'
+services:
+  socket-stream:
+    image: "node:alpine"
+    working_dir: "/service"
+    volumes:
+      - ./socket-stream/:/service
+    command: ['node_modules/.bin/nodemon', '-w', 'lib/**/*', 'lib/index.js']
+  graphql:
+    image: "node:alpine"
+    working_dir: "/service"
+    volumes:
+      - ./graphql/:/service
+    command: ['node_modules/.bin/nodemon', '-w', 'lib/**/*', 'lib/index.js']
+    ports: 
+      - "4000:80"
+  ux:
+    image: "nginx:alpine"
+    volumes:
+      - ./etc/ux-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ux/build:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+  redis:
+    image: "redis:alpine"

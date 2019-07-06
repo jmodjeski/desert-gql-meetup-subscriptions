@@ -1,0 +1,33 @@
+{
+  "name": "graphql-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/graphql": "^14.2.2",
+    "husky": ">=1",
+    "lint-staged": ">=8",
+    "nodemon": "^1.19.1",
+    "prettier": "1.18.2",
+    "typescript": "^3.5.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "apollo-server": "^2.6.7",
+    "graphql": "^14.4.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build-watch": "tsc -w"
+  }
+}
