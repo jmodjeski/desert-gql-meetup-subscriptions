@@ -2,7 +2,7 @@ import React from 'react';
 import { WebSocketLink } from 'apollo-link-ws';
 
 const wsLink = new WebSocketLink({
-  uri: `ws://0.0.0.0:3000/graphql/subs`,
+  uri: `ws://0.0.0.0:3000/graphql`,
   options: {
     reconnect: true
   }
