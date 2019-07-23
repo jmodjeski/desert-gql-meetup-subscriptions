@@ -1,31 +1,44 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer, gql, PubSub } from 'apollo-server';
+import {prisma} from './generated/prisma-client';
 
 // The GraphQL schema
 const typeDefs = gql`
-  type Scenario {
-    name: String!
-    query: String!
+  type Message {
+    content: String!
+    scenario: String!
   }
 
   type Query {
-    "Scenarios to create configured subscriptions."
-    scenarios: [Scenario!]!
+    messages: [Message!]!
+  }
+
+  # type Mutation {
+  #   # addMessage(comment: String!): Message
+  # }
+
+  type Subscription {
+    # prisma(): Message
+    pubsub(channel: String!): Message
   }
 `;
 
-// A map of functions which return data for the schema.
 const resolvers = {
   Query: {
-    scenarios: () => [{
-      name: 'Once a second',
-      query: ''
-    }, {
-      name: 'Too Fast',
-      query: ''
-    }, {
-      name: 'Redis PubSub',
-      query: ''
-    }],
+    messages: () => []
+  },
+  // Mutation: {
+
+  // },
+  Subscription: {
+    // prisma: {
+    //   subscribe: prisma.$subscribe.message,
+    // },
+    pubsub: {
+      subscribe: (parent: any, args: any) => {
+        console.log(parent, args);
+        return;
+      }
+    }
   },
 };
 
@@ -34,6 +47,7 @@ const server = new ApolloServer({
   resolvers,
 });
 
-server.listen(80, '0.0.0.0').then(({ url }) => {
+server.listen(80, '0.0.0.0').then(({ url, subscriptionsUrl }) => {
   console.log(`🚀 Server ready at ${url}`);
+  console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
 });
