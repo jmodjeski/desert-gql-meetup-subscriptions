@@ -7,6 +7,7 @@ const channelRegistry = {};
 // The GraphQL schema
 const typeDefs = gql`
   type Message {
+    id: ID!
     content: String!
     scenario: String!
   }
@@ -23,7 +24,6 @@ const typeDefs = gql`
 
   type Subscription {
     prisma: Message
-    """Pub Sub Example"""
     pubsub(channel: String!): Message
     pubsubBuffered(channel: String!): Message
   }
@@ -66,15 +66,22 @@ const resolvers = {
       subscribe: (parent: unknown, args: any) => {
         return prisma.$subscribe.message({
           mutation_in: ['CREATED'],
-        }).node().then((r) => {
+          node: {
+            scenario: 'prisma',
+          },
+        }).node().then((messageIterator) => {
           return {
-            ...r,
-            next: async () => {
-              const result = await r.next();
-              const value = result.value;
-              return {prisma: value};
+            ...messageIterator,
+            next: async (value?: any) => {
+              const result = await messageIterator.next(value);
+              return {
+                done: result.done,
+                value: {
+                  prisma: result.value,
+                },
+              };
             }
-          }
+          };
         });
       },
     },
