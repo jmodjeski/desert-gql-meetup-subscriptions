@@ -1,5 +1,5 @@
 # endpoint: http://0.0.0.0:4466/gql-subscriptions/dev
-endpoint: http://0.0.0.0:4466/test2/dev
+endpoint: http://prisma:4466/test2/dev
 datamodel: datamodel.prisma
 generate:
   - generator: typescript-client

@@ -16,15 +16,16 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    # addMessage(comment: String!, scenario: String!): Message
+    addMessage(content: String!, scenario: String!): Message
     createChannel(channel: String!, intervalMs: Int!) : String
     destroyChannel(channel: String!) : String
   }
 
   type Subscription {
-    # prisma(): Message
+    prisma: Message
     """Pub Sub Example"""
     pubsub(channel: String!): Message
+    pubsubBuffered(channel: String!): Message
   }
 `;
 
@@ -33,6 +34,9 @@ const resolvers = {
     messages: () => []
   },
   Mutation: {
+    addMessage: (parent: any, args: {content: string, scenario: string}) => {
+      return prisma.createMessage({content: args.content, scenario: args.scenario});
+    },
     createChannel: (parent: any, args: {channel: string, intervalMs: number}) => {
       if (channelRegistry[args.channel]) {
         throw new Error(`Channel Already Defined: ${args.channel}`)
@@ -58,12 +62,31 @@ const resolvers = {
     },
   },
   Subscription: {
-    // prisma: {
-    //   subscribe: prisma.$subscribe.message,
-    // },
+    prisma: {
+      subscribe: (parent: unknown, args: any) => {
+        return prisma.$subscribe.message({
+          mutation_in: ['CREATED'],
+        }).node().then((r) => {
+          return {
+            ...r,
+            next: async () => {
+              const result = await r.next();
+              const value = result.value;
+              return {prisma: value};
+            }
+          }
+        });
+      },
+    },
     pubsub: {
       subscribe: (parent: unknown, args: {channel: string}) => {
         return channels.asyncIterator([args.channel]);
+      }
+    },
+    pubsubBuffered: {
+      subscribe: (parent: unknown, args: {channel: string}) => {
+        const originalIterator = channels.asyncIterator([args.channel]);
+        return originalIterator;
       }
     }
   },

@@ -1,25 +1,12 @@
 import React from 'react';
-import Prisma from './Prisma';
-import PubSub from './PubSub';
+import Example from './Example';
+import {MaybeScenario} from '../types';
 
-export const SCENARIO_MAP = {
-  prisma: `Prisma`,
-  pubsub: `Pub Sub`,
-};
-
-interface Props {
-  scenario: string;
-}
-
-const Examples: React.FC<Props> = ({scenario}) => {
-  switch (scenario) {
-    case SCENARIO_MAP.prisma:
-      return <Prisma />;
-    case SCENARIO_MAP.pubsub:
-      return <PubSub />;
-    default:
-      return null;
+const Examples: React.FC<{scenario: MaybeScenario}> = ({scenario}) => {
+  if (!scenario) {
+    return null;
   }
+  return <Example scenario={scenario} />;
 }
 
 export default Examples;
