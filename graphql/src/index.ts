@@ -45,6 +45,7 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  subscriptions: '/'
 });
 
 server.listen(80, '0.0.0.0').then(({ url, subscriptionsUrl }) => {
