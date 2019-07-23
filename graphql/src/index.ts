@@ -16,13 +16,14 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    # addMessage(comment: String!): Message
+    # addMessage(comment: String!, scenario: String!): Message
     createChannel(channel: String!, intervalMs: Int!) : String
     destroyChannel(channel: String!) : String
   }
 
   type Subscription {
     # prisma(): Message
+    """Pub Sub Example"""
     pubsub(channel: String!): Message
   }
 `;
@@ -61,7 +62,7 @@ const resolvers = {
     //   subscribe: prisma.$subscribe.message,
     // },
     pubsub: {
-      subscribe: (parent: any, args: {channel: string}) => {
+      subscribe: (parent: unknown, args: {channel: string}) => {
         return channels.asyncIterator([args.channel]);
       }
     }
@@ -71,7 +72,6 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  subscriptions: '/'
 });
 
 server.listen(80, '0.0.0.0').then(({ url, subscriptionsUrl }) => {

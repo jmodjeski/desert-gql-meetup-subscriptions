@@ -1,11 +1,5 @@
 version: '3'
 services:
-  socket-stream:
-    image: "node:alpine"
-    working_dir: "/service"
-    volumes:
-      - ./socket-stream/:/service
-    command: ['node_modules/.bin/nodemon', '-w', 'lib/**/*', 'lib/index.js']
   graphql:
     image: "node:alpine"
     working_dir: "/service"
@@ -14,7 +8,6 @@ services:
     command: ['node_modules/.bin/nodemon', '-w', 'lib/**/*', 'lib/index.js']
     ports:
       - "4000:80"
-
   ux:
     image: "nginx:alpine"
     volumes:
@@ -22,7 +15,6 @@ services:
       - ./ux/build:/usr/share/nginx/html:ro
     ports:
       - "3000:80"
-
   # Basic Prisma Setup
   # https://www.prisma.io/docs/get-started/01-setting-up-prisma-new-database-TYPESCRIPT-t002/#set-up-and-connect-prisma-with-a-database
   prisma:

@@ -14,20 +14,12 @@ pushd graphql
 yarn
 popd
 
-pushd socket-stream
-yarn
-popd
-
 pushd ux
 yarn
 popd
 
 echo "Running Builds"
 pushd graphql
-yarn build
-popd
-
-pushd socket-stream
 yarn build
 popd
 
