@@ -1,5 +1,8 @@
 import {Scenario} from './types';
 
+export const GRAPHQL_ENDPOINT = `http://0.0.0.0:4000/graphql`;
+export const SUBSCRIPTION_ENDPOINT = `ws://0.0.0.0:4000/graphql`;
+
 export const CHANNELS = {
   prisma: `PRISMA`,
   pubsub: `PUBSUB`,
@@ -9,64 +12,19 @@ export const CHANNELS = {
 
 export const SCENARIOS: Scenario[] = [
   {
-    channel: CHANNELS.prisma,
     label: 'Prisma',
-    intervalMs: 1000,
-    subscriptionName: `prisma`,
-    subscriptionQuery: `
-      subscription {
-        prisma {
-          content
-        }
-      }
-    `
+    key: CHANNELS.prisma,
   },
   {
-    channel: CHANNELS.pubsub,
-    label: 'Pub Sub (1 Second Messages)',
-    intervalMs: 1000,
-    subscriptionName: `pubsub`,
-    subscriptionQuery: `
-      subscription($channel: String!) {
-        pubsub(channel: $channel) {
-          content
-        }
-      }
-    `,
-    subscriptionVariables: {
-      channel: CHANNELS.pubsub,
-    }
+    label: 'Pub Sub (Message received every second)',
+    key: CHANNELS.pubsub,
   },
   {
-    channel: CHANNELS.pubsubFast,
-    label: 'Pub Sub Fast (5 Millisecond Messages/No Throttle)',
-    intervalMs: 5,
-    subscriptionName: `pubsub`,
-    subscriptionQuery: `
-      subscription($channel: String!) {
-        pubsub(channel: $channel) {
-          content
-        }
-      }
-    `,
-    subscriptionVariables: {
-      channel: CHANNELS.pubsubFast,
-    }
+    label: 'Pub Sub Fast (Many Messages w/o Throttle)',
+    key: CHANNELS.pubsubFast,
   },
   {
-    channel: CHANNELS.pubsubBuffered,
-    label: 'Pub Sub Buffered (5 Millisecond Messages With Throttle)',
-    intervalMs: 5,
-    subscriptionName: `pubsubBuffered`,
-    subscriptionQuery: `
-      subscription($channel: String!) {
-        pubsubBuffered(channel: $channel) {
-          content
-        }
-      }
-    `,
-    subscriptionVariables: {
-      channel: CHANNELS.pubsubBuffered,
-    }
+    label: 'Pub Sub Buffered (Many Messages w/ Throttle)',
+    key: CHANNELS.pubsubBuffered,
   },
 ];

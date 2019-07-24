@@ -2,28 +2,32 @@ import React, {useEffect, useState} from 'react';
 import {SubscriptionClient} from 'subscriptions-transport-ws';
 import {Button} from 'reactstrap';
 import {request} from 'graphql-request';
-import {Message, Scenario} from '../types';
-import {castArray} from 'lodash';
-
-const GRAPHQL_ENDPOINT = `http://0.0.0.0:4000/graphql`;
-const SUBSCRIPTION_ENDPOINT = `ws://0.0.0.0:4000/graphql`;
+import {Message} from '../types';
+import {CHANNELS, GRAPHQL_ENDPOINT, SUBSCRIPTION_ENDPOINT} from '../scenarios';
 
 const client = new SubscriptionClient(SUBSCRIPTION_ENDPOINT, {reconnect: true});
 
-const Example: React.FC<{scenario: Scenario}> = ({scenario}) => {
+const PubSub: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   // subscribe/unsubscribe to channel
   useEffect(() => {
     const subscription = client.request({
-      query: scenario.subscriptionQuery,
-      variables: scenario.subscriptionVariables || {},
+      query: `
+      subscription($channel: String!) {
+        pubsub(channel: $channel) {
+          content
+        }
+      }
+    `,
+      variables: {
+        channel: CHANNELS.pubsub,
+      },
     }).subscribe({
 
       next: (result) => {
-        const message = result.data[scenario.subscriptionName];
-        // doing [message].concat(msgs) to reverse order
-        setMessages(msgs => msgs.concat(castArray(message)));
+        const message = result.data.pubsub;
+        setMessages(msgs => [message].concat(msgs));
       }
     });
 
@@ -38,8 +42,8 @@ const Example: React.FC<{scenario: Scenario}> = ({scenario}) => {
         createChannel(channel: $channel, intervalMs: $intervalMs)
       }
     `, {
-      channel: scenario.channel,
-      intervalMs: scenario.intervalMs,
+      channel: CHANNELS.pubsub,
+      intervalMs: 1000,
     });
   }
 
@@ -47,7 +51,7 @@ const Example: React.FC<{scenario: Scenario}> = ({scenario}) => {
     mutation ($channel: String!) {
       destroyChannel(channel: $channel)
     }
-  `, {channel: scenario.channel});
+  `, {channel: CHANNELS.pubsub});
 
   const handleClear = () => setMessages([]);
 
@@ -56,6 +60,12 @@ const Example: React.FC<{scenario: Scenario}> = ({scenario}) => {
 
   return (
     <React.Fragment>
+      <div className="section example-info">
+        <p>
+          To add messages, click "Create Channel". When done, click "Destroy Channel".
+          Receives a message every second... that's about it...
+        </p>
+      </div>
       <div className="section example-info">
         <h6>Scenario:</h6>
         <Button color="primary" onClick={handleStart}>Create Channel</Button>
@@ -74,4 +84,4 @@ const Example: React.FC<{scenario: Scenario}> = ({scenario}) => {
   );
 }
 
-export default Example;
+export default PubSub;
