@@ -39,8 +39,8 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     channel: CHANNELS.pubsubFast,
-    label: 'Pub Sub Fast (1 Millisecond Messages/No Throttle)',
-    intervalMs: 1,
+    label: 'Pub Sub Fast (5 Millisecond Messages/No Throttle)',
+    intervalMs: 5,
     subscriptionName: `pubsub`,
     subscriptionQuery: `
       subscription($channel: String!) {
@@ -55,12 +55,12 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     channel: CHANNELS.pubsubBuffered,
-    label: 'Pub Sub Buffered (1 Millisecond Messages With Throttle)',
-    intervalMs: 1,
+    label: 'Pub Sub Buffered (5 Millisecond Messages With Throttle)',
+    intervalMs: 5,
     subscriptionName: `pubsubBuffered`,
     subscriptionQuery: `
       subscription($channel: String!) {
-        pubsub(channel: $channel) {
+        pubsubBuffered(channel: $channel) {
           content
         }
       }
