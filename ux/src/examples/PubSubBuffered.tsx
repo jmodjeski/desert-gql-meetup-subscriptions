@@ -33,7 +33,6 @@ const PubSubBuffered: React.FC = () => {
     });
 
     return function cleanup() {
-      console.log(`cleanup!`);
       return subscription.unsubscribe();
     }
   });
