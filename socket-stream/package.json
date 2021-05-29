@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "cuid": "^2.1.6",
-    "ws": "^7.0.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@types/cuid": "^1.3.0",
